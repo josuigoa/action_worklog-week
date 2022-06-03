@@ -1,0 +1,8 @@
+--library hxnodejs
+--library ideckia_api
+--library action_worklog
+--dce full
+-D js-es=6
+WorklogWeek
+
+--js index.js
