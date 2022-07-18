@@ -51,7 +51,7 @@ class WorklogWeek extends IdeckiaAction {
 				weekMondayString,
 				weekFriday,
 				weekFridayString;
-			var text = '';
+			var text = [];
 			var yearStart = @:privateAccess new DateTime(DateTime.local().yearStart());
 			for (w in weeks) {
 				totalHours = (w.totalTime.getDay() - 1) * 24 + w.totalTime.getHour();
@@ -66,9 +66,10 @@ class WorklogWeek extends IdeckiaAction {
 				weekFriday = weekMonday.add(Day(4));
 				weekFridayString = '${weekFriday.getMonth()}/${weekFriday.getDay()}';
 
-				text += '$weekMondayString -> $weekFridayString => $hoursString:$minutesString hours\n';
+				text.push('$weekMondayString -> $weekFridayString => $hoursString:$minutesString hours');
 			}
-			server.dialog.info(text);
+
+			server.dialog.list('Worklog week', 'Worklog hours per week', '', text);
 
 			resolve(currentState);
 		});
