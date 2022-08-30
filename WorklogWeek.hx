@@ -7,7 +7,7 @@ using api.IdeckiaApi;
 
 typedef Props = {
 	@:editable("Where is the log?", 'worklog.json')
-	var filePath:String;
+	var file_path:String;
 }
 
 @:name("worklog-week")
@@ -18,7 +18,7 @@ class WorklogWeek extends IdeckiaAction {
 
 	public function execute(currentState:ItemState):js.lib.Promise<ItemState> {
 		return new js.lib.Promise((resolve, reject) -> {
-			var data:Array<DayData> = WorklogUtils.parse(props.filePath);
+			var data:Array<DayData> = WorklogUtils.parse(props.file_path);
 
 			var currentWeek = -1;
 			var weekTotalTime = new DateTime(0);

@@ -8,7 +8,7 @@ Reads the JSON file created by [worklog](https://github.com/ideckia/action_workl
 
 | Name | Type | Default | Description | Possible values |
 | ----- |----- | ----- | ----- | ----- |
-| filePath | String | Where is the log? | false | 'worklog.json' | null |
+| file_path | String | Where is the log? | false | 'worklog.json' | null |
 
 ## On single click
 
@@ -23,7 +23,7 @@ Counts the hours and shows in a dialog
         {
             "name": "worklog-week",
             "props": {
-                "filePath": "/path/to/worklog.json"
+                "file_path": "/path/to/worklog.json"
             }
         }
     ]
