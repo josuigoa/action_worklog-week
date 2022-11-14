@@ -4,10 +4,11 @@ import datetime.DateTime;
 import WorklogUtils;
 
 using api.IdeckiaApi;
+using StringTools;
 
 typedef Props = {
-	@:editable("Where is the log?", 'worklog.json')
-	var file_path:String;
+	@:editable("What is the directory where the log files are stored?", '.')
+	var logs_directory:String;
 }
 
 @:name("worklog-week")
@@ -18,30 +19,18 @@ class WorklogWeek extends IdeckiaAction {
 
 	public function execute(currentState:ItemState):js.lib.Promise<ItemState> {
 		return new js.lib.Promise((resolve, reject) -> {
-			var data:Array<DayData> = WorklogUtils.parse(props.file_path);
-
-			var currentWeek = -1;
+			var data = [];
 			var weekTotalTime = new DateTime(0);
+			var currentWeek;
 			var weeks:Array<{week:Int, totalTime:DateTime}> = [];
-
-			for (d in data) {
-				if (d.totalTime == null)
-					continue;
-
-				if (currentWeek != d.day.getWeek()) {
-					if (currentWeek != -1) {
-						weeks.push({week: currentWeek, totalTime: weekTotalTime});
-					}
-
-					currentWeek = d.day.getWeek();
-					weekTotalTime = new DateTime(0);
-				}
-
-				weekTotalTime = weekTotalTime.add(Hour(d.totalTime.getHour())).add(Minute(d.totalTime.getMinute()));
-			}
-
-			if (currentWeek != -1)
+			for (f in sys.FileSystem.readDirectory(props.logs_directory)) {
+				data = WorklogUtils.parse(haxe.io.Path.join([props.logs_directory, f]));
+				weekTotalTime = new DateTime(0);
+				for (d in data)
+					weekTotalTime = weekTotalTime.add(Hour(d.totalTime.getHour())).add(Minute(d.totalTime.getMinute()));
+				currentWeek = Std.parseInt(f.replace('worklog_', '').replace('.json', ''));
 				weeks.push({week: currentWeek, totalTime: weekTotalTime});
+			}
 
 			var totalHours,
 				totalMinutes,
@@ -51,7 +40,7 @@ class WorklogWeek extends IdeckiaAction {
 				weekMondayString,
 				weekFriday,
 				weekFridayString;
-			var text = [];
+			var listElements = [];
 			var yearStart = @:privateAccess new DateTime(DateTime.local().yearStart());
 			for (w in weeks) {
 				totalHours = (w.totalTime.getDay() - 1) * 24 + w.totalTime.getHour();
@@ -66,10 +55,10 @@ class WorklogWeek extends IdeckiaAction {
 				weekFriday = weekMonday.add(Day(4));
 				weekFridayString = '${weekFriday.getMonth()}/${weekFriday.getDay()}';
 
-				text.push('$weekMondayString -> $weekFridayString => $hoursString:$minutesString hours');
+				listElements.push('${w.week} week ($weekMondayString -> $weekFridayString) => $hoursString:$minutesString hours');
 			}
 
-			server.dialog.list('Worklog week', 'Worklog hours per week', '', text);
+			server.dialog.list('Worklog week', 'Worklog hours per week', 'Worklog hours per week', listElements);
 
 			resolve(currentState);
 		});
