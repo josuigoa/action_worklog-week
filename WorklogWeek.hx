@@ -24,7 +24,12 @@ class WorklogWeek extends IdeckiaAction {
 			var currentWeek;
 			var weeks:Array<{week:Int, totalTime:DateTime}> = [];
 			for (f in sys.FileSystem.readDirectory(props.logs_directory)) {
-				data = WorklogUtils.parse(haxe.io.Path.join([props.logs_directory, f]));
+				try {
+					data = WorklogUtils.parse(haxe.io.Path.join([props.logs_directory, f]));
+				} catch (e:haxe.Exception) {
+					server.log.error('Error parsing file [$f]: $e');
+					continue;
+				}
 				weekTotalTime = new DateTime(0);
 				for (d in data)
 					weekTotalTime = weekTotalTime.add(Hour(d.totalTime.getHour())).add(Minute(d.totalTime.getMinute()));
