@@ -17,13 +17,15 @@ class WorklogWeek extends IdeckiaAction {
 	override public function init(initialState:ItemState):js.lib.Promise<ItemState>
 		return super.init(initialState);
 
-	public function execute(currentState:ItemState):js.lib.Promise<ItemState> {
+	public function execute(currentState:ItemState):js.lib.Promise<ActionOutcome> {
 		return new js.lib.Promise((resolve, reject) -> {
 			var data = [];
 			var weekTotalTime = new DateTime(0);
 			var currentWeek;
 			var weeks:Array<{week:Int, totalTime:DateTime}> = [];
 			for (f in sys.FileSystem.readDirectory(props.logs_directory)) {
+				if (!f.startsWith('worklog_'))
+					continue;
 				data = WorklogUtils.parse(haxe.io.Path.join([props.logs_directory, f]));
 				weekTotalTime = new DateTime(0);
 				for (d in data)
@@ -60,7 +62,7 @@ class WorklogWeek extends IdeckiaAction {
 
 			server.dialog.list('Worklog week', 'Worklog hours per week', 'Worklog hours per week', listElements);
 
-			resolve(currentState);
+			resolve(new ActionOutcome({state: currentState}));
 		});
 	}
 }
