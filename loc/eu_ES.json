@@ -1,0 +1,22 @@
+[
+	{
+		"id": "action_description",
+		"text": "Weekly summary."
+	},
+	{
+		"id": "prop_logs_directory",
+		"text": "Zein direktoriotan gordeko dituzu log fitxategiak?"
+	},
+	{
+		"id": "dialog_title",
+		"text": "Worklog astea"
+	},
+	{
+		"id": "dialog_header",
+		"text": "Worklog orduak asteka"
+	},
+	{
+		"id": "dialog_line_text",
+		"text": "{0}. astea ({1} -> {2}) => {3}:{4} ordu"
+	}
+]

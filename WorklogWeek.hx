@@ -7,12 +7,13 @@ using api.IdeckiaApi;
 using StringTools;
 
 typedef Props = {
-	@:editable("What is the directory where the log files are stored?", '.')
+	@:editable("prop_logs_directory", '.')
 	var logs_directory:String;
 }
 
 @:name("worklog-week")
-@:description("")
+@:description("action_description")
+@:localize
 class WorklogWeek extends IdeckiaAction {
 	override public function init(initialState:ItemState):js.lib.Promise<ItemState>
 		return super.init(initialState);
@@ -34,14 +35,7 @@ class WorklogWeek extends IdeckiaAction {
 				weeks.push({week: currentWeek, totalTime: weekTotalTime});
 			}
 
-			var totalHours,
-				totalMinutes,
-				hoursString,
-				minutesString,
-				weekMonday,
-				weekMondayString,
-				weekFriday,
-				weekFridayString;
+			var totalHours, totalMinutes, hoursString, minutesString, weekMonday, weekMondayString, weekFriday, weekFridayString;
 			var listElements = [];
 			var yearStart = @:privateAccess new DateTime(DateTime.local().yearStart());
 			for (w in weeks) {
@@ -51,16 +45,16 @@ class WorklogWeek extends IdeckiaAction {
 				minutesString = (totalMinutes < 10) ? '0$totalMinutes' : '$totalMinutes';
 
 				// look for the previous monday
-				weekMonday = yearStart.add(Week(w.week)).snap(Week(Down, Monday));
+				weekMonday = yearStart.add(Week(w.week - 1)).snap(Week(Down, Monday));
 				weekMondayString = '${weekMonday.getMonth()}/${weekMonday.getDay()}';
 
 				weekFriday = weekMonday.add(Day(4));
 				weekFridayString = '${weekFriday.getMonth()}/${weekFriday.getDay()}';
 
-				listElements.push('${w.week} week ($weekMondayString -> $weekFridayString) => $hoursString:$minutesString hours');
+				listElements.push(Loc.dialog_line_text.tr([w.week, weekMondayString, weekFridayString, hoursString, minutesString]));
 			}
 
-			server.dialog.list('Worklog week', 'Worklog hours per week', 'Worklog hours per week', listElements);
+			core.dialog.list(Loc.dialog_title.tr(), Loc.dialog_header.tr(), Loc.dialog_header.tr(), listElements);
 
 			resolve(new ActionOutcome({state: currentState}));
 		});

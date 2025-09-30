@@ -1,0 +1,22 @@
+[
+	{
+		"id": "action_description",
+		"text": "Astekako laburpena."
+	},
+	{
+		"id": "prop_logs_directory",
+		"text": "What is the directory where the log files are stored?"
+	},
+	{
+		"id": "dialog_title",
+		"text": "Worklog week"
+	},
+	{
+		"id": "dialog_header",
+		"text": "Worklog hours per week"
+	},
+	{
+		"id": "dialog_line_text",
+		"text": "{0} week ({1} -> {2}) => {3}:{4} hours"
+	}
+]
